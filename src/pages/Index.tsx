@@ -1,13 +1,47 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { PhoneFrame } from "@/components/PhoneFrame";
+import { LockScreen } from "@/components/LockScreen";
+import { HomeScreen } from "@/components/HomeScreen";
+import { Calculator } from "@/components/apps/Calculator";
+import { Clock } from "@/components/apps/Clock";
+import { Settings } from "@/components/apps/Settings";
+import { Camera } from "@/components/apps/Camera";
 
 const Index = () => {
+  const [isLocked, setIsLocked] = useState(true);
+  const [openApp, setOpenApp] = useState<string | null>(null);
+
+  const handleOpenApp = (appId: string) => {
+    setOpenApp(appId);
+  };
+
+  const handleCloseApp = () => {
+    setOpenApp(null);
+  };
+
+  const renderApp = () => {
+    switch (openApp) {
+      case "calculator":
+        return <Calculator onClose={handleCloseApp} />;
+      case "clock":
+        return <Clock onClose={handleCloseApp} />;
+      case "settings":
+        return <Settings onClose={handleCloseApp} />;
+      case "camera":
+        return <Camera onClose={handleCloseApp} />;
+      default:
+        return <HomeScreen onOpenApp={handleOpenApp} />;
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <PhoneFrame>
+      {isLocked ? (
+        <LockScreen onUnlock={() => setIsLocked(false)} />
+      ) : (
+        renderApp()
+      )}
+    </PhoneFrame>
   );
 };
 
